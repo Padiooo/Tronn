@@ -29,7 +29,9 @@ public class Player {
 	public Player(SpriteSheet spriteSheet, String color, int number, ScoreDAO score) {
 
 		this.color = color;
-		this.score = score;
+		if (score != null) {
+			this.score = score;
+		}
 
 		// setting where they start and where they look at
 		if (number == 1) {
@@ -62,13 +64,15 @@ public class Player {
 		}
 
 		// getting images
-		for (int i = 0; i < imgTab.length; i++) {
-			this.imgTab[i] = spriteSheet.crop(i, j, size);
+		if (spriteSheet != null) {
+			for (int i = 0; i < imgTab.length; i++) {
+				this.imgTab[i] = spriteSheet.crop(i, j, size);
+			}
+			setImgPlayer();
 		}
 
 		setPosX();
 		setPosY();
-		setImgPlayer();
 
 	}
 
@@ -157,7 +161,7 @@ public class Player {
 	public void setPosY() {
 		this.posY = y * size;
 	}
-	
+
 	public BufferedImage getImg(int i) {
 		return imgTab[i];
 	}
