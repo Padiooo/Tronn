@@ -6,15 +6,17 @@ import java.util.ArrayList;
 import model.dao.ScoreDAO;
 
 public class Player {
-
-	private int x;
+	
+	// used to move player in the grid with UA
+	private int x;	
 	private int y;
+	// used to map between grid UA and real grid (real grid = UA * size)
+	private int size = 40;
+	// used by the Pannel to display the image in the real grid
 	private int posX;
 	private int posY;
-	private int size = 40;
 
 	private String color;
-	private String path;
 	private BufferedImage[] imgTab = new BufferedImage[8];
 	private BufferedImage imgPlayer = null;
 
@@ -38,12 +40,10 @@ public class Player {
 			this.x = 1;
 			this.y = 7;
 			this.currentDirection = 1;
-			setDirection();
 		} else if (number == 2) {
 			this.x = 13;
 			this.y = 2;
 			this.currentDirection = 3;
-			setDirection();
 		}
 		// setting the row to get images matching the color
 		int j = 0;
@@ -63,6 +63,7 @@ public class Player {
 			j = 6;
 		}
 
+		setDirection();
 		// getting images
 		if (spriteSheet != null) {
 			for (int i = 0; i < imgTab.length; i++) {
@@ -76,6 +77,11 @@ public class Player {
 
 	}
 
+	// changeDirection(int key) change the direction
+	// by adding the key received to the integer "currentDirection"
+	// and switch the direction
+	// if new direction > 3 set it to 0
+	// if new direction < 0 set it to 3
 	public void changeDirection(int key) {
 
 		switch (key) {
@@ -83,20 +89,25 @@ public class Player {
 			currentDirection += key;
 			if (currentDirection > 3)
 				currentDirection = 0;
-			setDirection();
 			break;
 		case -1:
 			currentDirection += key;
 			if (currentDirection < 0)
 				currentDirection = 3;
-			setDirection();
 			break;
 		default:
 			break;
 		}
+		setDirection();
 		setImgPlayer();
 	}
 
+	// move() 
+	// first create a new object " Wall " 
+	// and give his current position (x,y) then
+	// change player x or y by + or - 1
+	// only x or only y changed
+	
 	public void move() {
 
 		wall.add(new Wall(posX, posY, imgTab[4]));
@@ -122,6 +133,11 @@ public class Player {
 		}
 	}
 
+	// crossTheScreen() called by the controller
+	// use to cross the direction
+	// if player is moving out of the screen on the left
+	// he appears on the right etc
+	
 	public void crossTheScreen() {
 
 		switch (direction) {
@@ -146,22 +162,32 @@ public class Player {
 		}
 	}
 
+	// setDirection() called after any change on " currentDirection "
+	// to refresh the direction
 	public void setDirection() {
 		this.direction = directionTab[currentDirection];
 	}
 
+	// setDirection() called after any change on " currentDirection "
+	// to refresh the image
 	public void setImgPlayer() {
 		this.imgPlayer = imgTab[currentDirection];
 	}
 
+	// setPosX() called after any change on " x "
+	// to refresh the posX used by the Pannel
 	public void setPosX() {
 		this.posX = x * size;
 	}
 
+	// setPosX() called after any change on " y "
+	// to refresh the posY used by the Pannel
 	public void setPosY() {
 		this.posY = y * size;
 	}
 
+	// getImg(int i) used by the Pannel to display 
+	// Win / Draw in the same color of players
 	public BufferedImage getImg(int i) {
 		return imgTab[i];
 	}
@@ -242,14 +268,6 @@ public class Player {
 
 	public void setCurrentDirection(int currentDirection) {
 		this.currentDirection = currentDirection;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
 	}
 
 	public ScoreDAO getScore() {
